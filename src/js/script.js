@@ -88,7 +88,7 @@
       clickableTrigger.addEventListener('click', function(event) {
         
         /* prevent default action for event */
-        event.preventDefault();;
+        event.preventDefault();
        
         /* find active product (product that has active class) */
         const activeProduct = document.querySelector(select.all.menuProductsActive);
@@ -100,7 +100,7 @@
         }
 
         /* toggle active class on thisProduct.element */
-        thisProduct.element.classList.toggle('active')
+        thisProduct.element.classList.toggle('active');
 
       });
   
