@@ -89,6 +89,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion(){
@@ -145,7 +146,7 @@
     
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
       const formData = utils.serializeFormToObject(thisProduct.form);
-      console.log('formData !!!!!!! ', formData);
+      console.log('formData ', formData);
     
       // set price to default price
       let price = thisProduct.data.price;
@@ -154,15 +155,15 @@
       for(let paramId in thisProduct.data.params) {
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
-        console.log('param!!!!!!!! ', param);
-        console.log('paramId!!!!!!!!!! ',paramId);
+        console.log('param ', param);
+        console.log('paramId ',paramId);
     
         // for every option in this category
         for(let optionId in param.options) {
           // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
-          console.log('optionId!!!!!!!!!!!!! ', optionId);
-          console.log('option!!!!!!!! ',option);
+          console.log('optionId ', optionId);
+          console.log('option ',option);
         
           if(formData[paramId] && formData[paramId].includes(optionId)){
             // check if the option is not default
@@ -171,14 +172,23 @@
 
               // add option price to price variable
               price+=option.price;
-              console.log('option.price!!!!!!! ', option.price);
+              console.log('option.price ', option.price);
             } 
           } else {
             if(option.default===true) {
               price = price - option.price;
-              console.log('option.price!!!!!!!!! ', option.price);
+              console.log('option.price ', option.price);
             }
-          }           
+          }  
+          
+          const optionImage = thisProduct.imageWrapper.querySelector('.'+paramId+'-'+optionId);
+          console.log('optionImage !!!!', optionImage);
+          
+          if (optionImage){
+            if(formData[paramId]&& formData[paramId].includes(optionId)){
+              optionImage.classList.add(classNames.menuProduct.imageVisible);
+            }else{optionImage.classList.remove(classNames.menuProduct.imageVisible);} 
+          }
         }
 
       }
