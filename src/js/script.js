@@ -118,7 +118,8 @@
 
     getElements(){
       const thisProduct = this;
-    
+      
+      thisProduct.dom = {};
       thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
       thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
@@ -126,6 +127,36 @@
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
       thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
+
+      //thisProduct.dom = {}
+      //thisProduct.dom.form = thisProduct.element.querySelector(select.menuProduct.form);
+      /*
+      Wprowadzamy tutaj dodatkowo jedną nowość – obiekt thisCart.dom. Nie jest to nic wymaganego, 
+      ale znacznie ułatwi nam nawigację po klasie. W poprzednich klasach przypisywaliśmy referencję do
+       elementów DOM od razu jako właściwości instancji (np. thisProduct.amountWidgetElem). Jest to o 
+       tyle słaby pomysł, że tak samo przechowywaliśmy również referencję do instancji 
+       AmountWidget (thisProduct.amountWidget), czy nawet zwykłe wartości (np. thisWidget.value).
+        Mogło to wprowadzać zamieszanie, np. inny programista, widząc właściwość o nazwie thisCart.totalPrice, 
+        mógłby się zastanawiać, czy jest to referencja do elementu HTML, który pokazuje cenę, czy może po 
+        prostu liczba? Dzięki temu, że schowamy referencje elementów DOM do osobnego obiektu (thisCart.dom), 
+        to łatwiej będziemy w stanie określić rolę poszczególnych właściwości. Widzisz w kodzie 
+        thisCart.dom.totalPrice i od razu wiesz, że to musi być element DOM. Widzisz thisCart.totalPrice 
+        i masz pewność, że to coś innego.
+
+        Nie jest to oczywiście jakaś wymagana praktyka, lecz zwykły pomysł, 
+        który powinien uczytelnić nam trochę naszą klasę.
+
+        Ćwiczenie
+        Spróbuj wprowadzić ten sam pomysł w klasie Product. Tak, żeby wszystkie referencje do elementów DOM 
+        były "schowane" w obiekcie dodatkowym obiekcie thisProduct.dom.
+      
+        const thisCart =this;
+
+      thisCart.dom = {};
+
+      thisCart.dom.wrapper = element;
+
+      */
     }
 
     initAmountWidget(){
@@ -303,6 +334,37 @@
     }
   }
 
+  class Cart{
+    constructor(element){
+      const thisCart = this;
+
+      thisCart.products = [];
+
+      thisCart.getElements(element);
+      thisCart.initActions();
+
+      console.log('new Cart: ', thisCart);
+    }
+
+    getElements(element){
+      const thisCart =this;
+
+      thisCart.dom = {};
+
+      thisCart.dom.wrapper = element;
+      thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
+    }
+
+    initActions(){
+      const thisCart = this;
+      thisCart.dom.toggleTrigger.addEventListener('click', function(){
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
+    }
+
+
+  }
+
   const app = {
 
     initMenu: function(){
@@ -319,6 +381,13 @@
       thisApp.data = dataSource;
     },
 
+    initCart: function(){
+      const thisApp = this;
+
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);
+    },
+
     init: function(){
       const thisApp = this;
       //console.log('*** App starting ***');
@@ -328,6 +397,7 @@
       //console.log('templates:', templates);
       thisApp.initData();
       thisApp.initMenu();
+      thisApp.initCart();
     },
   };
 
