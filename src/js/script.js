@@ -127,37 +127,60 @@
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
       thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
-
-      //thisProduct.dom = {}
-      //thisProduct.dom.form = thisProduct.element.querySelector(select.menuProduct.form);
-      /*
-      Wprowadzamy tutaj dodatkowo jedną nowość – obiekt thisCart.dom. Nie jest to nic wymaganego, 
-      ale znacznie ułatwi nam nawigację po klasie. W poprzednich klasach przypisywaliśmy referencję do
-       elementów DOM od razu jako właściwości instancji (np. thisProduct.amountWidgetElem). Jest to o 
-       tyle słaby pomysł, że tak samo przechowywaliśmy również referencję do instancji 
-       AmountWidget (thisProduct.amountWidget), czy nawet zwykłe wartości (np. thisWidget.value).
-        Mogło to wprowadzać zamieszanie, np. inny programista, widząc właściwość o nazwie thisCart.totalPrice, 
-        mógłby się zastanawiać, czy jest to referencja do elementu HTML, który pokazuje cenę, czy może po 
-        prostu liczba? Dzięki temu, że schowamy referencje elementów DOM do osobnego obiektu (thisCart.dom), 
-        to łatwiej będziemy w stanie określić rolę poszczególnych właściwości. Widzisz w kodzie 
-        thisCart.dom.totalPrice i od razu wiesz, że to musi być element DOM. Widzisz thisCart.totalPrice 
-        i masz pewność, że to coś innego.
-
-        Nie jest to oczywiście jakaś wymagana praktyka, lecz zwykły pomysł, 
-        który powinien uczytelnić nam trochę naszą klasę.
-
-        Ćwiczenie
-        Spróbuj wprowadzić ten sam pomysł w klasie Product. Tak, żeby wszystkie referencje do elementów DOM 
-        były "schowane" w obiekcie dodatkowym obiekcie thisProduct.dom.
-      
-        const thisCart =this;
-
-      thisCart.dom = {};
-
-      thisCart.dom.wrapper = element;
-
-      */
     }
+
+    addToCart(){
+      const thisProduct = this;
+
+      app.cart.add(thisProduct.prepareCartProduct());
+    }
+
+    prepareCartProduct() {
+      const thisProduct = this;
+
+      const productSummary = {
+        id: thisProduct.id,
+        name: thisProduct.data.name,
+        amount: thisProduct.amountWidget.value,
+        priceSingle: thisProduct.priceSingle,
+        price: thisProduct.priceSingle * thisProduct.amountWidget.value,
+        params: thisProduct.prepareCartProductParams(),
+      };
+      return productSummary;
+    }
+
+    prepareCartProductParams(){
+      const thisProduct=this;
+
+      const formData= utils.serializeFormToObject(thisProduct.form);
+      const params={};
+
+      // for every category (param)
+      for (let paramId in thisProduct.data.params){
+        const param= thisProduct.data.params[paramId];
+
+        // create category param in params const eg. params = { ingredients: { name: 'Ingredients', options: {}}}
+        params[paramId]={
+          label:param.label,
+          options:{},
+
+        };
+
+        // for every option in this category
+        for(let optionId in param.options) {
+          const option = param.options[optionId];
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId); 
+          
+          if(optionSelected) {
+            params[paramId].options[optionId] = option.label;  
+          }          
+        }
+      } 
+
+      return params;
+    }
+
+
 
     initAmountWidget(){
       const thisProduct = this;
@@ -214,6 +237,7 @@
       thisProduct.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
     }
 
@@ -270,6 +294,7 @@
     
       // multiply price by amount
       price *= thisProduct.amountWidget.value;
+      thisProduct.priceSingle = price;
 
       // update calculated price in the HTML
       thisProduct.priceElem.innerHTML = price;
@@ -353,6 +378,7 @@
 
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
+      thisCart.dom.productList = element.querySelector(select.cart.productList);
     }
 
     initActions(){
@@ -362,6 +388,17 @@
       });
     }
 
+    add(menuProduct){
+      const thisCart = this;
+
+      console.log('adding product', menuProduct);
+
+      const generatedHTML = templates.cartProduct(menuProduct);
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+      console.log('generatedDOM: ', generatedDOM);
+
+      thisCart.dom.productList.appendChild(generatedDOM);
+    }
 
   }
 
