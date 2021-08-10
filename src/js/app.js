@@ -36,10 +36,10 @@ const app = {
     thisApp.cart = new Cart(cartElem);
     console.log('thisApp.cart: ', thisApp.cart);
 
-    thisApp.productList = document.querySelector(select.containerOf.cart);
+    thisApp.productList = document.querySelector(select.containerOf.menu);
 
     thisApp.productList.addEventListener('add-to-cart',  function(event){
-      app.cart.addEventListener(event.detail.product);
+      app.cart.add(event.detail.product);
     });
   }, 
   init: function() {
