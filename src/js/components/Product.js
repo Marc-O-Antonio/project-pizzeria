@@ -49,6 +49,7 @@ class Product {
   initAmountWidget() {
     const thisProduct = this;
     thisProduct.amountWidget = new AmountWidget(thisProduct.dom.amountWidgetElem);
+    console.log('thisProduct.amountWidget w Product: ', thisProduct.amountWidget);
     thisProduct.dom.amountWidgetElem.addEventListener('updated', function() {
       thisProduct.processOrder();
     });
@@ -104,6 +105,7 @@ class Product {
     thisProduct.priceSingle = price;
     price *= thisProduct.amountWidget.value;
     thisProduct.dom.priceElem.innerHTML = price;
+    console.log('thisProduct.dom.amountWidgetElem.input.innerHTML: ', thisProduct.dom.amountWidgetElem.innerHTML);
   }
   addToCart() {
     const thisProduct = this;  
