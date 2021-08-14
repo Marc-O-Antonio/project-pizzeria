@@ -1,16 +1,17 @@
 import {select, settings} from '../settings.js';
 import BaseWidget from './BaseWidget.js';
+// import Booking from './Booking.js';
+
 class AmountWidget extends BaseWidget{
   constructor(element) {
     super(element, settings.amountWidget.defaultValue);
     
     const thisWidget = this;
-
+  
     thisWidget.getElements(element);
     thisWidget.value = thisWidget.dom.input.value || settings.amountWidget.defaultValue;
     thisWidget.initActions();
   }
-
   getElements() {
     const thisWidget = this;
     
@@ -18,7 +19,6 @@ class AmountWidget extends BaseWidget{
     thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
-
   isValid(value) {
     return !isNaN(value) 
     && value >= settings.amountWidget.defaultMin 
@@ -26,10 +26,9 @@ class AmountWidget extends BaseWidget{
   }
   renderValue(){
     const thisWidget = this;
-
     thisWidget.dom.input.value = thisWidget.value;
   }
-
+  
   initActions() {
     const thisWidget = this;
     thisWidget.dom.input.addEventListener('change', function() {
